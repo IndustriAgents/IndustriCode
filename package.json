@@ -1,6 +1,8 @@
 {
-  "name": "llm-chat-ui",
+  "name": "industricode",
   "version": "0.1.0",
+  "description": "Chat UI for industrial AI agents - connect MCP servers alongside cloud or local LLMs.",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
