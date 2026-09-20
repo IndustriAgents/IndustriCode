@@ -1,6 +1,20 @@
-# LLM Chat UI
+# IndustriCode
 
-A modern, intuitive chat interface for working with local and third‑party language models in the IndustriConnect ecosystem. Built with React, TypeScript, and Tailwind CSS.
+[![License: MIT](https://img.shields.io/github/license/IndustriAgents/IndustriCode)](LICENSE)
+[![MCP](https://img.shields.io/badge/Model_Context_Protocol-client-0b7285)](https://modelcontextprotocol.io)
+
+A chat interface for working with language models that can reach industrial
+systems. It connects to MCP servers — the ones in
+[IndustriConnect](https://github.com/IndustriAgents/IndustriConnect) and
+[OPCUA-MCP](https://github.com/IndustriAgents/OPCUA-MCP), or any other — and
+puts them in front of a cloud or local model, so an agent can call a tool that
+reads a PLC in the same conversation you are having with it.
+
+Built with React, TypeScript, Vite and Tailwind CSS.
+
+> **This talks to industrial equipment.** Point it at the mock devices that
+> ship with the MCP servers before you point it at anything real, and read
+> [SECURITY.md](SECURITY.md) first.
 
 ## Features
 
@@ -51,12 +65,20 @@ This will start:
 - Backend WebSocket server at ws://localhost:3003
 - Backend HTTP server at http://localhost:3002
 
-## Features
+## How the pieces fit
 
-- **Chat Interface**: Interact with Cloud LLMs (OpenAI GPT-5, Gemini, Anthropic) or local Ollama models.
-- **MCP Server Integration**: Configure and connect to real MCP servers (MQTT, OPC UA, etc.).
-- **Tool Calling**: LLMs can automatically discover and use tools provided by connected MCP servers.
-- **Real-time Updates**: WebSocket connection ensures live status updates from MCP servers.
+```text
+you ─► IndustriCode (browser)
+        │  WebSocket :3003 / HTTP :3002
+        ▼
+     mcp-backend  ──stdio─►  MCP server (Modbus, OPC UA, MQTT, …)  ──fieldbus─►  device
+        │
+        └── cloud model (OpenAI / Gemini / Anthropic) or local Ollama
+```
+
+The browser never speaks to an MCP server directly. `mcp-backend` owns the
+server processes, because MCP runs over stdio, and relays tool calls and status
+over a WebSocket.
 
 ## Usage
 
@@ -100,8 +122,10 @@ This will start:
 
 ## Project Structure
 
-```
-ui/
+```text
+IndustriCode/
+├── mcp-backend/           # Node service that owns the MCP server processes
+├── MCPs/                  # MQTT and OPC UA servers, for trying it out locally
 ├── src/
 │   ├── components/        # React components
 │   │   ├── Sidebar.tsx    # Left sidebar with sessions and theme toggle
@@ -126,6 +150,18 @@ ui/
 - [ ] Command/Prompt templates
 - [ ] Multi-tab support for multiple sessions
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to run the frontend and backend
+together and what to check before opening a pull request, and the
+[Code of Conduct](CODE_OF_CONDUCT.md) for how we work together.
+
+## Security
+
+API keys, MCP server processes and industrial equipment all meet in this app.
+[SECURITY.md](SECURITY.md) covers what that means, and how to report a
+vulnerability privately.
+
 ## License
 
-ISC
+Released under the [MIT License](LICENSE).
